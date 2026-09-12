@@ -2,9 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'core/constants/app_strings.dart';
+import 'core/router/app_router.dart';
 import 'core/theme/app_dimens.dart';
 import 'core/theme/app_theme.dart';
-import 'features/game/presentation/screens/game_screen.dart';
 
 class ScreenUtil {
   ScreenUtil._();
@@ -61,13 +61,14 @@ class CatchTheFallingTilesApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       builder: (context, _) {
-        return MaterialApp(
+        return MaterialApp.router(
           title: AppStrings.appTitle,
           debugShowCheckedModeBanner: false,
           theme: AppTheme.darkTheme,
-          home: const GameScreen(),
+          routerConfig: AppRouter.router,
         );
       },
     );
   }
 }
+

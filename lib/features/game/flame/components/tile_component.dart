@@ -3,6 +3,7 @@ import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
 import '../catch_the_falling_tiles_game.dart';
+import 'crack_effect_component.dart';
 import 'ground_component.dart';
 import 'paddle_component.dart';
 
@@ -51,8 +52,17 @@ class TileComponent extends CircleComponent
       removeFromParent();
     } else if (other is GroundComponent) {
       _resolved = true;
+      // Spawn crack/shatter visual effect at impact point
+      final impactPoint = Vector2(position.x, other.position.y);
+      game.world.add(
+        CrackEffectComponent(
+          impactPoint: impactPoint,
+          tileColor: paint.color,
+        ),
+      );
       game.onTileMissed();
       removeFromParent();
     }
   }
 }
+

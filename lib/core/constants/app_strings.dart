@@ -14,12 +14,19 @@ class AppStrings {
   // HUD
   static const String scorePrefix = 'Score: ';
   static String formatScore(int score) => '$scorePrefix$score';
+  static const String highScorePrefix = 'Best: ';
+  static String formatHighScore(int score) => '$highScorePrefix$score';
 
   // Game Over Screen
   static const String gameOver = 'Game Over';
   static const String finalScorePrefix = 'Final score: ';
   static String formatFinalScore(int score) => '$finalScorePrefix$score';
+  static const String newHighScore = '🎉 NEW HIGH SCORE! 🎉';
   static const String playAgainButton = 'Play Again';
+
+  // Navigation & General
+  static const String errorPageTitle = 'Page Not Found';
+  static const String backToGame = 'Back to Game';
 
   // Overlay Identifiers
   static const String overlayStart = 'start';

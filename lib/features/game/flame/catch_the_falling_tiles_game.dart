@@ -7,23 +7,39 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Color, KeyEventResult;
 import 'package:flutter/services.dart';
 
+import '../../../core/audio/audio_service.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/game_constants.dart';
+import '../../../core/di/injector.dart';
 import '../../../core/theme/app_colors.dart';
-import '../domain/models/game_phase.dart';
+import '../domain/entities/game_phase.dart';
 import 'components/background_component.dart';
 import 'components/drag_zone_component.dart';
 import 'components/ground_component.dart';
 import 'components/paddle_component.dart';
 import 'components/tile_component.dart';
 
-export '../domain/models/game_phase.dart';
+export '../domain/entities/game_phase.dart';
 
 class CatchTheFallingTilesGame extends FlameGame
     with HasCollisionDetection, KeyboardEvents {
+  CatchTheFallingTilesGame({
+    AudioService? audioService,
+    this.onGameStarted,
+    this.onScoreChanged,
+    this.onLivesChanged,
+    this.onGameOverCallback,
+  }) : audioService = audioService ?? (sl.isRegistered<AudioService>() ? sl<AudioService>() : null);
+
   static const String overlayStart = AppStrings.overlayStart;
   static const String overlayHud = AppStrings.overlayHud;
   static const String overlayGameOver = AppStrings.overlayGameOver;
+
+  final AudioService? audioService;
+  final VoidCallback? onGameStarted;
+  final void Function(int newScore)? onScoreChanged;
+  final void Function(int remainingLives)? onLivesChanged;
+  final void Function(int finalScore)? onGameOverCallback;
 
   // Notifiers let Flutter overlays rebuild directly without extra state management.
   final ValueNotifier<int> score = ValueNotifier<int>(0);
@@ -168,6 +184,8 @@ class CatchTheFallingTilesGame extends FlameGame
       ..remove(overlayStart)
       ..remove(overlayGameOver)
       ..add(overlayHud);
+
+    onGameStarted?.call();
   }
 
   void _spawnTile() {
@@ -200,12 +218,18 @@ class CatchTheFallingTilesGame extends FlameGame
 
   void onTileCaught() {
     score.value += 1;
+    audioService?.playCatch();
+    onScoreChanged?.call(score.value);
   }
 
   void onTileMissed() {
     lives.value -= 1;
+    audioService?.playMiss();
+    onLivesChanged?.call(lives.value);
     if (lives.value <= 0) {
       _endGame();
+    } else {
+      audioService?.playLifeLost();
     }
   }
 
@@ -214,10 +238,13 @@ class CatchTheFallingTilesGame extends FlameGame
     _keysDown.clear();
     _spawner?.timer.stop();
     _clearTiles();
+    audioService?.playGameOver();
+    onGameOverCallback?.call(score.value);
     overlays
       ..remove(overlayHud)
       ..add(overlayGameOver);
   }
+
 
   void _clearTiles() {
     world.children.whereType<TileComponent>().toList().forEach(

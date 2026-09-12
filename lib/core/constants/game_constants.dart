@@ -43,4 +43,11 @@ class GameConstants {
   /// little, capped so the game never becomes unfair.
   static const double speedRampPerPoint = 4;
   static const double maxSpeedRampBonus = 160;
+
+  // --- Crack / Shatter Visual Effect ---
+  static const int crackShardCount = 8;
+  static const double crackEffectDuration = 0.4;
+  static const double crackMinShardSpeed = 70.0;
+  static const double crackMaxShardSpeed = 190.0;
 }
+

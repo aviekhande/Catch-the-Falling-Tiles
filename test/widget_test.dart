@@ -1,23 +1,32 @@
 import 'package:catch_the_falling_tiles/app.dart';
 import 'package:catch_the_falling_tiles/core/constants/app_strings.dart';
 import 'package:catch_the_falling_tiles/core/constants/game_constants.dart';
+import 'package:catch_the_falling_tiles/core/di/injector.dart';
 import 'package:catch_the_falling_tiles/core/theme/app_dimens.dart';
 import 'package:catch_the_falling_tiles/core/theme/app_text_styles.dart';
-import 'package:catch_the_falling_tiles/features/game/domain/models/game_phase.dart';
-import 'package:catch_the_falling_tiles/features/game/domain/models/game_stats.dart';
+import 'package:catch_the_falling_tiles/features/game/domain/entities/game_phase.dart';
+import 'package:catch_the_falling_tiles/features/game/domain/entities/game_stats.dart';
 import 'package:catch_the_falling_tiles/features/game/flame/components/ground_component.dart';
 import 'package:catch_the_falling_tiles/features/game/flame/components/paddle_component.dart';
 import 'package:catch_the_falling_tiles/features/game/presentation/widgets/lives_indicator.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
+    await initDependencies();
+  });
+
   group('App & Widget Tests', () {
     testWidgets('boots CatchTheFallingTilesApp and loads home screen', (
       tester,
     ) async {
       await tester.pumpWidget(const CatchTheFallingTilesApp());
+
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
